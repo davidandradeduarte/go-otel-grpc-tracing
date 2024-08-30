@@ -32,7 +32,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	otlpExporter, err := otlptrace.New(
 		context.Background(),
 		otlptracegrpc.NewClient(
-			otlptracegrpc.WithEndpoint("localhost:4317"),
+			otlptracegrpc.WithEndpoint("jaeger:4317"),
 			otlptracegrpc.WithInsecure(),
 		),
 	)
@@ -62,7 +62,7 @@ func main() {
 		}
 	}()
 	tracer = tp.Tracer("app2")
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", ":50052")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -84,7 +84,7 @@ func (s *server) SayHello(ctx context.Context, in *person.Person) (*person.Hello
 	log.Printf(`message="saying hello to %s (id: %s)" traceID=%s`, in.Name, in.Id, span.SpanContext().TraceID())
 
 	time.Sleep(time.Second / 2)
-	helloAddress := "localhost:50052"
+	helloAddress := "app3:50053"
 	conn, err := grpc.NewClient(helloAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),

@@ -31,7 +31,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	otlpExporter, err := otlptrace.New(
 		context.Background(),
 		otlptracegrpc.NewClient(
-			otlptracegrpc.WithEndpoint("localhost:4317"),
+			otlptracegrpc.WithEndpoint("jaeger:4317"),
 			otlptracegrpc.WithInsecure(),
 		),
 	)
@@ -61,7 +61,7 @@ func main() {
 		}
 	}()
 	tracer = tp.Tracer("app3")
-	lis, err := net.Listen("tcp", ":50052")
+	lis, err := net.Listen("tcp", ":50053")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

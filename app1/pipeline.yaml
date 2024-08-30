@@ -15,7 +15,7 @@ pipeline:
 tracer:
   open_telemetry_collector:
     grpc:
-      - address: "localhost:4317"
+      - address: "jaeger:4317"
     sampling:
       enabled: false
       ratio: 0.85 # No default (optional)

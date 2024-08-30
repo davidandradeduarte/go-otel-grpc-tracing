@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"app1/person"
 
@@ -16,6 +17,7 @@ import (
 )
 
 func main() {
+	time.Sleep(3 * time.Second)
 	service.RunCLI(context.Background())
 }
 
@@ -56,7 +58,7 @@ type message struct {
 }
 
 func (p *processor) Process(_ context.Context, msg *service.Message) (service.MessageBatch, error) {
-	personAddress := "localhost:50051"
+	personAddress := "app2:50052"
 	conn, err := grpc.NewClient(personAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),

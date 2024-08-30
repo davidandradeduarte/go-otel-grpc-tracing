@@ -1,0 +1,24 @@
+services:
+  db:
+    image: jaegertracing/all-in-one:1.60
+    container_name: jaeger
+    restart: always
+    ports:
+      - 16686:16686
+  app1:
+    build: ./app1
+    restart: always
+    container_name: app1
+    depends_on:
+      - app2
+      - app3
+
+  app2:
+    build: ./app2
+    container_name: app2
+    restart: always
+
+  app3:
+    build: ./app3
+    container_name: app3
+    restart: always
