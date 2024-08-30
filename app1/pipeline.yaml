@@ -1,0 +1,23 @@
+input:
+  generate:
+    count: 1
+    mapping: root = {"id":uuid_v4(), "name":"david"}
+
+pipeline:
+  processors:
+    - log:
+        message: "input"
+        fields_mapping: |
+          json = content().string()
+          traceID = tracing_id()
+    - grpc:
+        address: "TODO"
+tracer:
+  open_telemetry_collector:
+    http:
+      - address: "localhost:4318"
+    sampling:
+      enabled: false
+      ratio: 0.85 # No default (optional)
+    tags:
+      service.name: app1
