@@ -14,8 +14,8 @@ pipeline:
         address: "TODO"
 tracer:
   open_telemetry_collector:
-    http:
-      - address: "localhost:4318"
+    grpc:
+      - address: "localhost:4317"
     sampling:
       enabled: false
       ratio: 0.85 # No default (optional)

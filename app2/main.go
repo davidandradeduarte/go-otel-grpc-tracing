@@ -16,7 +16,7 @@ import (
 	"go.opentelemetry.io/otel"
 
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -29,27 +29,19 @@ import (
 var tracer trace.Tracer
 
 func initTracerProvider() *sdktrace.TracerProvider {
-	headers := map[string]string{
-		"content-type": "application/json",
-	}
-	jaeger, err := otlptrace.New(
+	otlpExporter, err := otlptrace.New(
 		context.Background(),
-		otlptracehttp.NewClient(
-			otlptracehttp.WithEndpoint("localhost:4318"),
-			otlptracehttp.WithHeaders(headers),
-			otlptracehttp.WithInsecure(),
+		otlptracegrpc.NewClient(
+			otlptracegrpc.WithEndpoint("localhost:4317"),
+			otlptracegrpc.WithInsecure(),
 		),
 	)
 	if err != nil {
-		log.Fatalf("new jaeger exporter failed: %v", err)
+		log.Fatalf("error creating otlp exporter: %v", err)
 		return nil
 	}
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(
-			jaeger,
-			sdktrace.WithMaxExportBatchSize(sdktrace.DefaultMaxExportBatchSize),
-			sdktrace.WithBatchTimeout(sdktrace.DefaultScheduleDelay*time.Millisecond),
-			sdktrace.WithMaxExportBatchSize(sdktrace.DefaultMaxExportBatchSize)),
+		sdktrace.WithBatcher(otlpExporter),
 		sdktrace.WithResource(
 			sdkresource.NewWithAttributes(
 				semconv.SchemaURL,
