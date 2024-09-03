@@ -58,8 +58,7 @@ type message struct {
 }
 
 func (p *processor) Process(_ context.Context, msg *service.Message) (service.MessageBatch, error) {
-	personAddress := "app2:50052"
-	conn, err := grpc.NewClient(personAddress,
+	conn, err := grpc.NewClient(p.address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
@@ -76,7 +75,7 @@ func (p *processor) Process(_ context.Context, msg *service.Message) (service.Me
 	if err := json.Unmarshal(bytes, &m); err != nil {
 		return nil, fmt.Errorf("failed to convert message to struct")
 	}
-	h, err := psc.SayHello(msg.Context(), &person.Person{Id: m.ID, Name: m.Name})
+	h, err := psc.SayHello(msg.Context(), &person.Person{Id: m.ID})
 	if err != nil {
 		return nil, fmt.Errorf("could not send request to person server: %v", err)
 	}

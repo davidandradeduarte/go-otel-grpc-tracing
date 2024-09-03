@@ -1,7 +1,7 @@
 input:
   generate:
     count: 1
-    mapping: root = {"id":uuid_v4(), "name":"david"}
+    mapping: root = {"id":"1"}
 
 pipeline:
   processors:
@@ -11,7 +11,7 @@ pipeline:
           json = content().string()
           traceID = tracing_id()
     - grpc:
-        address: "TODO"
+        address: "app2:50052"
 tracer:
   open_telemetry_collector:
     grpc:

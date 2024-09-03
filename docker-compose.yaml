@@ -1,10 +1,22 @@
 services:
-  db:
+  jaeger:
     image: jaegertracing/all-in-one:1.60
     container_name: jaeger
     restart: always
     ports:
       - 16686:16686
+
+  db:
+    image: postgres:16.4
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+
   app1:
     build: ./app1
     restart: always
@@ -17,6 +29,8 @@ services:
     build: ./app2
     container_name: app2
     restart: always
+    depends_on:
+      - db
 
   app3:
     build: ./app3
